@@ -17,7 +17,7 @@ class Media
     private ?string $filename = null;
 
     #[ORM\ManyToOne(inversedBy: 'media')]
-    private ?User $users = null;
+    private ?User $user = null;
 
     public function getId(): ?int
     {
@@ -36,14 +36,14 @@ class Media
         return $this;
     }
 
-    public function getUsers(): ?User
+    public function getUser(): ?User
     {
-        return $this->users;
+        return $this->user;
     }
 
-    public function setUsers(?User $users): static
+    public function setUser(?User $user): static
     {
-        $this->users = $users;
+        $this->user = $user;
 
         return $this;
     }

@@ -42,24 +42,24 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $dateFinish = null;
 
-    #[ORM\OneToMany(mappedBy: 'users', targetEntity: Media::class)]
-    private Collection $media;
-
     #[ORM\ManyToMany(targetEntity: Task::class, mappedBy: 'users')]
     private Collection $tasks;
 
     #[ORM\ManyToOne(inversedBy: 'users')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: true)]
     private ?ContractType $contractType = null;
 
     #[ORM\ManyToOne(inversedBy: 'users')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: true)]
     private ?Sector $sector = null;
+
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Media::class)]
+    private Collection $media;
 
     public function __construct()
     {
-        $this->media = new ArrayCollection();
         $this->tasks = new ArrayCollection();
+        $this->media = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -181,36 +181,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     /**
-     * @return Collection<int, Media>
-     */
-    public function getMedia(): Collection
-    {
-        return $this->media;
-    }
-
-    public function addMedium(Media $medium): static
-    {
-        if (!$this->media->contains($medium)) {
-            $this->media->add($medium);
-            $medium->setUsers($this);
-        }
-
-        return $this;
-    }
-
-    public function removeMedium(Media $medium): static
-    {
-        if ($this->media->removeElement($medium)) {
-            // set the owning side to null (unless already changed)
-            if ($medium->getUsers() === $this) {
-                $medium->setUsers(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
      * @return Collection<int, Task>
      */
     public function getTasks(): Collection
@@ -260,4 +230,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
+
+    /**
+     * @return Collection<int, Media>
+     */
+    public function getMedia(): Collection
+    {
+        return $this->media;
+    }
+
+    public function addMedium(Media $medium): static
+    {
+        if (!$this->media->contains($medium)) {
+            $this->media->add($medium);
+            $medium->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMedium(Media $medium): static
+    {
+        if ($this->media->removeElement($medium)) {
+            // set the owning side to null (unless already changed)
+            if ($medium->getUser() === $this) {
+                $medium->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+
 }

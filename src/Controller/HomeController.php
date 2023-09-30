@@ -14,15 +14,32 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class HomeController extends AbstractController
 {
 
+    public function __construct(
+
+        private UserRepository $user
+    ) {
+    }
+
     #[IsGranted("IS_AUTHENTICATED_FULLY")]
     #[Route('/home', name: 'app_home')]
-    public function index(ContractTypeRepository $contractType, UserRepository $user): Response
+    public function index(ContractTypeRepository $contractType,): Response
     {
         $contracts = $contractType->findAll();
-        $employe = $user->findAll();
+        $employe = $this->user->findAll();
         return $this->render('home/index.html.twig', [
             'contracts' => $contracts,
             'employees'   => $employe
+        ]);
+    }
+
+    #[IsGranted("IS_AUTHENTICATED_FULLY")]
+    #[Route('/home/{id}', name: 'app_item')]
+    public function item(User $employe): Response
+    {
+        $user = $this->getUser();
+        return $this->render('home/item.html.twig', [
+            'employe'   => $employe,
+            'user'      => $user
         ]);
     }
 }

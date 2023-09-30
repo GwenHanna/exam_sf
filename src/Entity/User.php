@@ -58,11 +58,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Media::class)]
     private Collection $media;
 
+
+
     public function __construct()
     {
         $this->tasks = new ArrayCollection();
         $this->media = new ArrayCollection();
     }
+
 
     public function getId(): ?int
     {

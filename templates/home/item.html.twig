@@ -1,0 +1,42 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+	{# {{ employe.lastname }} #}
+{% endblock %}
+{% block body %}
+	<div
+		class="card w-100">
+		{# <img src=" {{ asset(employe.media.filename) }} " class="card-img-top" alt="..."> #}
+		<div class="card-header">
+			<h5 class="card-title">
+				{{ employe.firstname }}
+				{{ employe.lastname }}
+			</h5>
+		</div>
+		<div>
+			<p class="card-text">{{ employe.contractType.name }}
+			</p>
+			<p class="card-text">{{ employe.sector.name }}
+			</p>
+		</div>
+		<div class="card-body">
+			<div class="tasks">
+				<div class="task d-flex">
+					{% for task in employe.tasks %}
+						{% if user is same as(employe) %}
+							<input type="checkbox" name="task_{{task.id}}" id="task_{{task.id}}" {% if task.isCompleted %} checked {% endif %}>
+						{% endif %}
+
+						<label for="task_{{task.id}}">{{ task.name }}</label>
+					{% endfor %}
+				</div>
+			</div>
+
+		</div>
+	</div>
+	{% for media in employe.media %}
+		{{ media.filename }}
+
+		<img src="https://via.placeholder.com/640x480.png/00cc88?text=voluptatem" alt="">
+	{% endfor %}
+{% endblock %}

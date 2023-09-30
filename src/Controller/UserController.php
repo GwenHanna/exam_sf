@@ -2,14 +2,17 @@
 
 namespace App\Controller;
 
+use App\Entity\Task;
 use App\Entity\User;
 use App\Form\UserType;
 use App\Repository\UserRepository;
+use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Validator\Constraints\Date;
 
 #[Route('/admin/user')]
 class UserController extends AbstractController
@@ -26,10 +29,25 @@ class UserController extends AbstractController
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
         $user = new User();
+        $task = new Task();
         $form = $this->createForm(UserType::class, $user);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+
+            $fomData = $form->getData();
+
+            $tasksSelected = $fomData->getTasks();
+
+            $user
+                ->setRoles(["ROLE_USER"])
+                ->setDateCreated(new DateTime());
+
+            foreach ($tasksSelected as $key => $selectedTask) {
+
+                $user->addTask($selectedTask);
+            }
+
             $entityManager->persist($user);
             $entityManager->flush();
 
@@ -57,6 +75,7 @@ class UserController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+
             $entityManager->flush();
 
             return $this->redirectToRoute('app_user_index', [], Response::HTTP_SEE_OTHER);

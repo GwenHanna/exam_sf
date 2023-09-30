@@ -15,21 +15,23 @@
 						{{ employe.firstname }}
 						{{ employe.lastname }}
 					</h5>
-
-					<p class="card-text">{{ employe.contractType.name }}
-					</p>
-					<p class="card-text">{{ employe.sector.name }}
-					</p>
+					<pre>
+	{{ dump(employe.contractType) }}
+</pre>
+					{# <p class="card-text">{{ employe.contractType.name }}
+																														</p>
+																														<p class="card-text">{{ employe.sector.name }}
+																														</p> #}
 					<a href=" {{ path('app_item', {'id': employe.id}) }} " class="btn btn-dark">
 						Fiche
 					</a>
 				</div>
 			</div>
 			{# {% for media in employe.media %}
-																																																																			{{ media.filename }}
-																																																																
-																																																																			<img src="https://via.placeholder.com/640x480.png/00cc88?text=voluptatem" alt="">
-																																																																		{% endfor %} #}
+																																																																																		{{ media.filename }}
+																																																																															
+																																																																																		<img src="https://via.placeholder.com/640x480.png/00cc88?text=voluptatem" alt="">
+																																																																																	{% endfor %} #}
 		{% endif %}
 	{% endfor %}
 

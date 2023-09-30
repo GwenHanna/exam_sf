@@ -25,7 +25,7 @@ class Task
     #[ORM\Column]
     private ?bool $isCompleted = null;
 
-    #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'tasks')]
+    #[ORM\ManyToMany(targetEntity: User::class)]
     private Collection $users;
 
     public function __construct()

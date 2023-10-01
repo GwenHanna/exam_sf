@@ -3,10 +3,13 @@
 namespace App\Controller;
 
 use App\Entity\ContractType;
+use App\Entity\Task;
 use App\Entity\User;
+use App\Form\TaskType;
 use App\Repository\ContractTypeRepository;
 use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
@@ -34,12 +37,13 @@ class HomeController extends AbstractController
 
     #[IsGranted("IS_AUTHENTICATED_FULLY")]
     #[Route('/home/{id}', name: 'app_item')]
-    public function item(User $employe): Response
+    public function item(User $employe, Request $request): Response
     {
         $user = $this->getUser();
+
         return $this->render('home/item.html.twig', [
             'employe'   => $employe,
-            'user'      => $user
+            'user'      => $user,
         ]);
     }
 }

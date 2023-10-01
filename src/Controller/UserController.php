@@ -9,6 +9,7 @@ use App\Form\UserType;
 use App\Repository\UserRepository;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
+use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\Request;
@@ -41,54 +42,54 @@ class UserController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
 
-            $fomData = $form->getData();
+            try {
 
-            $tasksSelected = $fomData->getTasks();
 
-            $user
-                ->setRoles(["ROLE_USER"])
-                ->setDateCreated(new DateTime());
+                $fomData = $form->getData();
+                $tasksSelected = $fomData->getTasks();
 
-            foreach ($tasksSelected as $key => $selectedTask) {
+                $user
+                    ->setRoles(["ROLE_USER"])
+                    ->setDateCreated(new DateTime());
 
-                $user->addTask($selectedTask);
-            }
+                foreach ($tasksSelected as $key => $selectedTask) {
 
-            $filename = $form->get('filename')->getData();
-
-            // this condition is needed because the 'brochure' field is not required
-            // so the PDF file must be processed only when a file is uploaded
-            if ($filename) {
-                $originalFilename = pathinfo($filename->getClientOriginalName(), PATHINFO_FILENAME);
-                // this is needed to safely include the file name as part of the URL
-                $safeFilename = $this->slugger->slug($originalFilename);
-                $newFilename = $safeFilename . '-' . uniqid() . '.' . $filename->guessExtension();
-
-                // Move the file to the directory where brochures are stored
-                try {
-                    $filename->move(
-                        $this->getParameter('file_name_directory'),
-                        $newFilename
-                    );
-                } catch (FileException $e) {
-                    // ... handle exception if something happens during file upload
+                    $user->addTask($selectedTask);
                 }
 
-                // updates the 'filenamename' property to store the PDF file name
-                // instead of its contents
-                $media = new Media();
-                $media
-                    ->setFilename($newFilename)
-                    ->setUser($user->getId());
+                $filename = $form->get('filename')->getData();
+                if ($filename) {
+                    $originalFilename = pathinfo($filename->getClientOriginalName(), PATHINFO_FILENAME);
 
-                $user->addMedium($media);
+                    $safeFilename = $this->slugger->slug($originalFilename);
+                    $newFilename = $safeFilename . '-' . uniqid() . '.' . $filename->guessExtension();
+
+                    try {
+                        $filename->move(
+                            $this->getParameter('file_name_directory'),
+                            $newFilename
+                        );
+                    } catch (FileException $e) {
+                        // ... handle exception if something happens during file upload
+                    }
+
+                    $media = new Media();
+                    $media
+                        ->setFilename($newFilename)
+                        ->setUser($user->getId());
+
+                    $user->addMedium($media);
+
+                    $this->addFlash('success', "L'employée à bien été enregistrer !");
+                    $entityManager->persist($user);
+                    $entityManager->persist($media);
+
+                    $entityManager->flush();
+                    return $this->redirectToRoute('app_user_index', [], Response::HTTP_SEE_OTHER);
+                }
+            } catch (Exception $e) {
+                //throw $th;
             }
-            dump($user);
-            $entityManager->persist($user);
-            $entityManager->persist($media);
-            $entityManager->flush();
-
-            return $this->redirectToRoute('app_user_index', [], Response::HTTP_SEE_OTHER);
         }
 
         return $this->render('user/new.html.twig', [
@@ -110,7 +111,6 @@ class UserController extends AbstractController
     {
         $form = $this->createForm(UserType::class, $user);
         $form->handleRequest($request);
-        dd($user);
         if ($form->isSubmitted() && $form->isValid()) {
 
             $entityManager->flush();

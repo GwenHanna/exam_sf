@@ -25,14 +25,44 @@ class UserType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('email', EmailType::class)
+            ->add(
+                'email',
+                EmailType::class,
+                [
+                    'required' => true,
+                ]
+            )
             // ->add('roles')
-            ->add('password', PasswordType::class)
-            ->add('lastname', TextType::class)
-            ->add('firstname', TextType::class)
-            ->add('dateCreated', DateType::class)
-            ->add('dateFinish', DateType::class)
+            ->add(
+                'password',
+                PasswordType::class,
+                [
+                    'required' => true,
+                ]
+            )
+            ->add(
+                'lastname',
+                TextType::class,
+                [
+                    'required' => true,
+                ]
+            )
+            ->add(
+                'firstname',
+                TextType::class,
+                [
+                    'required' => true,
+                ]
+            )
+            ->add(
+                'dateFinish',
+                DateType::class,
+                [
+                    'label' => 'Date de fin',
+                ]
+            )
             ->add('tasks', EntityType::class, [
+                'label' => "Secteur d'activité",
                 'class' => Task::class,
                 'choice_label' => 'name',
                 'multiple' => true,
@@ -42,6 +72,7 @@ class UserType extends AbstractType
             ])
             ->add('contractType', EntityType::class, [
                 'class' => ContractType::class,
+                'label' => 'Type de contrats',
                 'choice_label' => 'name',
                 'constraints' => [
                     new NotBlank([
@@ -66,7 +97,7 @@ class UserType extends AbstractType
             ->add('filename', FileType::class, [
                 'label' => 'Image',
                 'mapped' => false,
-                'required' => false,
+                'required' => true,
                 'constraints' => [
                     new File([
                         'maxSize' => '8024k',

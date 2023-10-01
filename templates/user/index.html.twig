@@ -1,10 +1,20 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}User index
+{% block title %}Administration
 {% endblock %}
 
+
 {% block body %}
-	<h1>User index</h1>
+	<h1>
+		{{block('title')}}
+	</h1>
+	{% for type, messages in app.flashes(['success', 'info', 'warning', 'danger']) %}
+		{% for message in messages %}
+			<div class="alert alert-{{ type }}" role="alert">
+				{{ message }}
+			</div>
+		{% endfor %}
+	{% endfor %}
 
 	<table class="table">
 		<thead>

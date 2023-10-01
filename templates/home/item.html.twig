@@ -4,9 +4,12 @@
 	{# {{ employe.lastname }} #}
 {% endblock %}
 {% block body %}
-	<div
-		class="card w-100">
-		{# <img src=" {{ asset(employe.media.filename) }} " class="card-img-top" alt="..."> #}
+	<div class="card w-100">
+		{% for media in employe.media %}
+
+			<img src="{{ asset("uploads/" ~ media.filename) }}" class="card-img-top" alt="...">
+		{% endfor %}
+
 		<div class="card-header">
 			<h5 class="card-title">
 				{{ employe.firstname }}
@@ -34,9 +37,5 @@
 
 		</div>
 	</div>
-	{% for media in employe.media %}
-		{{ media.filename }}
 
-		<img src="https://via.placeholder.com/640x480.png/00cc88?text=voluptatem" alt="">
-	{% endfor %}
 {% endblock %}

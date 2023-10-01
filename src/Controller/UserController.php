@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Media;
 use App\Entity\Task;
 use App\Entity\User;
 use App\Form\UserType;
@@ -9,14 +10,19 @@ use App\Repository\UserRepository;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Component\Validator\Constraints\Date;
 
 #[Route('/admin/user')]
 class UserController extends AbstractController
 {
+    public function __construct(private SluggerInterface $slugger)
+    {
+    }
     #[Route('/', name: 'app_user_index', methods: ['GET'])]
     public function index(UserRepository $userRepository): Response
     {
@@ -48,7 +54,38 @@ class UserController extends AbstractController
                 $user->addTask($selectedTask);
             }
 
+            $filename = $form->get('filename')->getData();
+
+            // this condition is needed because the 'brochure' field is not required
+            // so the PDF file must be processed only when a file is uploaded
+            if ($filename) {
+                $originalFilename = pathinfo($filename->getClientOriginalName(), PATHINFO_FILENAME);
+                // this is needed to safely include the file name as part of the URL
+                $safeFilename = $this->slugger->slug($originalFilename);
+                $newFilename = $safeFilename . '-' . uniqid() . '.' . $filename->guessExtension();
+
+                // Move the file to the directory where brochures are stored
+                try {
+                    $filename->move(
+                        $this->getParameter('file_name_directory'),
+                        $newFilename
+                    );
+                } catch (FileException $e) {
+                    // ... handle exception if something happens during file upload
+                }
+
+                // updates the 'filenamename' property to store the PDF file name
+                // instead of its contents
+                $media = new Media();
+                $media
+                    ->setFilename($newFilename)
+                    ->setUser($user->getId());
+
+                $user->addMedium($media);
+            }
+            dump($user);
             $entityManager->persist($user);
+            $entityManager->persist($media);
             $entityManager->flush();
 
             return $this->redirectToRoute('app_user_index', [], Response::HTTP_SEE_OTHER);
@@ -73,7 +110,7 @@ class UserController extends AbstractController
     {
         $form = $this->createForm(UserType::class, $user);
         $form->handleRequest($request);
-
+        dd($user);
         if ($form->isSubmitted() && $form->isValid()) {
 
             $entityManager->flush();

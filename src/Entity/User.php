@@ -55,7 +55,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\JoinColumn(nullable: true)]
     private ?Sector $sector = null;
 
-    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Media::class)]
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Media::class, cascade: ["remove"])]
     private Collection $media;
 
 

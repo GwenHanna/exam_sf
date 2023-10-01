@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\JoinTable;
 
 #[ORM\Entity(repositoryClass: TaskRepository::class)]
 class Task
@@ -25,7 +26,8 @@ class Task
     #[ORM\Column]
     private ?bool $isCompleted = null;
 
-    #[ORM\ManyToMany(targetEntity: User::class)]
+    #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'tasks')]
+    #[JoinTable(name: 'task_user')]
     private Collection $users;
 
     public function __construct()

@@ -7,9 +7,15 @@
 
 		{% if 'ROLE_USER' in employe.roles %}
 
-			<div
-				class="card" style="width: 18rem;">
-				{# <img src=" {{ asset(employe.media.filename) }} " class="card-img-top" alt="..."> #}
+			<div class="card" style="width: 18rem;">
+				<pre>
+				
+			</pre>
+				{# {{ dump(employe.media.filename) }} #}
+				{% for media in employe.media %}
+
+					<img src="{{ asset("uploads/" ~ media.filename) }}" class="card-img-top" alt="...">
+				{% endfor %}
 				<div class="card-body">
 					<h5 class="card-title">
 						{{ employe.firstname }}
@@ -19,19 +25,19 @@
 	{{ dump(employe.contractType) }}
 </pre>
 					{# <p class="card-text">{{ employe.contractType.name }}
-																														</p>
-																														<p class="card-text">{{ employe.sector.name }}
-																														</p> #}
+																																																																																															</p>
+																																																																																															<p class="card-text">{{ employe.sector.name }}
+																																																																																															</p> #}
 					<a href=" {{ path('app_item', {'id': employe.id}) }} " class="btn btn-dark">
 						Fiche
 					</a>
 				</div>
 			</div>
 			{# {% for media in employe.media %}
-																																																																																		{{ media.filename }}
-																																																																															
-																																																																																		<img src="https://via.placeholder.com/640x480.png/00cc88?text=voluptatem" alt="">
-																																																																																	{% endfor %} #}
+																																																																																																																									{{ media.filename }}
+																																																																																																																						
+																																																																																																																									<img src="https://via.placeholder.com/640x480.png/00cc88?text=voluptatem" alt="">
+																																																																																																																								{% endfor %} #}
 		{% endif %}
 	{% endfor %}
 

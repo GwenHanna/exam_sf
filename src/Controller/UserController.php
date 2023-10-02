@@ -14,6 +14,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Component\Validator\Constraints\Date;
@@ -21,8 +22,10 @@ use Symfony\Component\Validator\Constraints\Date;
 #[Route('/admin/user')]
 class UserController extends AbstractController
 {
-    public function __construct(private SluggerInterface $slugger)
-    {
+    public function __construct(
+        private SluggerInterface $slugger,
+        private UserPasswordHasherInterface $passwordHasher
+    ) {
     }
     #[Route('/', name: 'app_user_index', methods: ['GET'])]
     public function index(UserRepository $userRepository): Response
@@ -47,15 +50,20 @@ class UserController extends AbstractController
 
                 $fomData = $form->getData();
                 $tasksSelected = $fomData->getTasks();
-
+                $passwordHash = $this->passwordHasher->hashPassword(
+                    $user,
+                    $fomData->getPassword()
+                );
                 $user
                     ->setRoles(["ROLE_USER"])
-                    ->setDateCreated(new DateTime());
+                    ->setDateCreated(new DateTime())
+                    ->setPassword($passwordHash);
 
                 foreach ($tasksSelected as $key => $selectedTask) {
 
                     $user->addTask($selectedTask);
                 }
+
 
                 $filename = $form->get('filename')->getData();
                 if ($filename) {

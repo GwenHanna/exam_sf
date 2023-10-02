@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\JoinTable;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -44,7 +45,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $dateFinish = null;
 
-    #[ORM\ManyToMany(targetEntity: Task::class, mappedBy: 'users')]
+    #[ORM\ManyToMany(targetEntity: Task::class, inversedBy: 'users')]
+    #[JoinTable(name: 'task_user')]
     private Collection $tasks;
 
     #[ORM\ManyToOne(inversedBy: 'users')]

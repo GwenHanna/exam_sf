@@ -26,8 +26,7 @@ class Task
     #[ORM\Column]
     private ?bool $isCompleted = null;
 
-    #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'tasks')]
-    #[JoinTable(name: 'task_user')]
+    #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'tasks', cascade: ["persist"],  orphanRemoval: true)]
     private Collection $users;
 
     public function __construct()

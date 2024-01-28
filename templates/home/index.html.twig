@@ -1,44 +1,33 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{% endblock %}
+{% block title %}Liste des employées{% endblock %}
 {% block body %}
-
-	{% for employe in employees %}
-
-		{% if 'ROLE_USER' in employe.roles %}
-
-			<div class="card" style="width: 18rem;">
-				<pre>
+<h1>
+		{{block('title')}}
+	</h1>
+   <div class="container d-flex flex-wrap justify-content-around mt-5">
+    {% for employe in employees %}
+        {% if 'ROLE_USER' in employe.roles %}
+            <div class="card" style="width: 18rem;">
+                {% for media in employe.media %}
+				<div class="w-25">
+                    <img class="w-100" src="{{ asset("uploads/" ~ media.filename) }}" class="card-img-top" alt="image de profile de {{employe.firstname}}">
 				
-			</pre>
-				{# {{ dump(employe.media.filename) }} #}
-				{% for media in employe.media %}
-
-					<img src="{{ asset("uploads/" ~ media.filename) }}" class="card-img-top" alt="...">
-				{% endfor %}
-				<div class="card-body">
-					<h5 class="card-title">
-						{{ employe.firstname }}
-						{{ employe.lastname }}
-					</h5>
-					<pre>
-	{{ dump(employe.contractType) }}
-</pre>
-					{# <p class="card-text">{{ employe.contractType.name }}
-																																																																																																														</p>
-																																																																																																														<p class="card-text">{{ employe.sector.name }}
-																																																																																																														</p> #}
-					<a href=" {{ path('app_item', {'id': employe.id}) }} " class="btn btn-dark">
-						Fiche
-					</a>
 				</div>
-			</div>
-			{# {% for media in employe.media %}
-																																																																																																																																		{{ media.filename }}
-																																																																																																																															
-																																																																																																																																		<img src="https://via.placeholder.com/640x480.png/00cc88?text=voluptatem" alt="">
-																																																																																																																																	{% endfor %} #}
-		{% endif %}
-	{% endfor %}
+                {% endfor %}
+                <div class="card-body">
+                    <h5 class="card-title">
+                        {{ employe.firstname }} {{ employe.lastname }}
+                    </h5>
+                    <p class="card-text">Contrat : {{ employe.contractType.name }}</p>
+                    <p class="card-text">Secteur d'activité : {{ employe.sector.name }}</p>
+                    <a href="{{ path('app_item', {'id': employe.id}) }}" class="btn btn-dark">
+                        Voir Fiche
+                    </a>
+                </div>
+            </div>
+        {% endif %}
+    {% endfor %}
+   </div>
 
 {% endblock %}

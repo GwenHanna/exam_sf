@@ -23,7 +23,7 @@ class HomeController extends AbstractController
     ) {
     }
 
-    #[IsGranted("IS_AUTHENTICATED_FULLY")]
+    // #[IsGranted("IS_AUTHENTICATED_FULLY")]
     #[Route('/home', name: 'app_home')]
     public function index(ContractTypeRepository $contractType,): Response
     {

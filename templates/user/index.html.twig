@@ -42,7 +42,6 @@
 					<td>{{ user.firstname }}</td>
 					{% for task in user.tasks %}
 						<td>{{ task.name }}</td>
-						<hr>
 					{% endfor %}
 					<td>{{ user.dateCreated ? user.dateCreated|date('Y-m-d') : '' }}</td>
 					<td>{{ user.dateFinish ? user.dateFinish|date('Y-m-d') : '' }}</td>

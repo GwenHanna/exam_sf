@@ -50,10 +50,13 @@ class UserController extends AbstractController
 
                 $fomData = $form->getData();
                 $tasksSelected = $fomData->getTasks();
+
+
                 $passwordHash = $this->passwordHasher->hashPassword(
                     $user,
                     $fomData->getPassword()
                 );
+
                 $user
                     ->setRoles(["ROLE_USER"])
                     ->setDateCreated(new DateTime())
